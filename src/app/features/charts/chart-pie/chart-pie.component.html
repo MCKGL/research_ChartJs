@@ -1,0 +1,8 @@
+<h2>Retourne les emissions par année pour un nombre de m2 donnée par type de chauffage</h2>
+
+<button (click)="getChartData()">Get Chart Data</button>
+<input id="metre-carre" type="number" [(ngModel)]="metresCarres">
+
+<div class="chart-container">
+  <canvas  id="MyChartPie" >{{ chart }}</canvas>
+</div>
