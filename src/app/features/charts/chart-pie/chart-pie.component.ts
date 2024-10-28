@@ -37,7 +37,7 @@ export class ChartPieComponent implements OnInit, OnDestroy {
       data: {
         labels: labels,
         datasets: [{
-          label: 'Emission totale en kg de CO₂e par mètre carré',
+          label: 'Emission totale en kg de CO₂e ',
           data: data,
           backgroundColor: backgroundColors,
           hoverOffset: 4
@@ -77,7 +77,6 @@ export class ChartPieComponent implements OnInit, OnDestroy {
   }
 
   // Generate chart. So we can call it from the template.
-  // Not very interesting here, because the datas are proportional, so the graph will always be the same.
   private generateChart() : void {
     this.dataChauffageSubscription = this.chauffageService.getDatasChauffage(this.metresCarres).subscribe(
       response => {
