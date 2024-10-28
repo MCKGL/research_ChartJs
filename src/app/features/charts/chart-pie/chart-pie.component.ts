@@ -25,6 +25,12 @@ export class ChartPieComponent implements OnInit, OnDestroy {
   }
 
   createChart(data: number[], labels: string[], backgroundColors: string[]): void {
+
+    // Destroy the previous chart if it exists, so we can create a new one with the button if we want to
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
     this.chart = new Chart("MyChartPie", {
       type: 'pie',
 
@@ -51,30 +57,38 @@ export class ChartPieComponent implements OnInit, OnDestroy {
     })
   };
 
+  // Let's get the color of the pie chart slice depending on the value of ecv !
   private getColor(ecv: number, minEcv: number, maxEcv: number): string {
-    // Normaliser la valeur de ecv entre 0 et 1 (inversé)
+    // Normalize the value of ecv between 0 and 1 (inverted) because we want the color to be red when ecv is high
     const normalized = (maxEcv - ecv) / (maxEcv - minEcv);
 
-    // Limiter les valeurs normalisées entre 0 et 1
+    // limit the value between 0 and 1
     const clamped = Math.max(0, Math.min(1, normalized));
 
-    // Calculer les composants RGB
-    const green = Math.round(255 * clamped); // Vert augmente avec la baisse de ecv
-    const red = 255 - green; // Rouge diminue avec la baisse de ecv
+    // calculate the color between red and green
+    const green = Math.round(255 * clamped); // Green up with the rise of ecv
+    const red = 255 - green; // Red down with the rise of ecv
 
-    return `rgb(${red}, ${green}, 50)`; // Couleur entre rouge et vert
+    return `rgb(${red}, ${green}, 50)`; // return the color in rgb format
   }
 
   ngOnInit(): void {
+    this.generateChart();
+  }
+
+  // Generate chart. So we can call it from the template.
+  // Not very interesting here, because the datas are proportional, so the graph will always be the same.
+  private generateChart() : void {
     this.dataChauffageSubscription = this.chauffageService.getDatasChauffage(this.metresCarres).subscribe(
       response => {
         this.datasChauffage = response.data;
         const ecvData = this.datasChauffage.map(chauffage => chauffage.ecv);
         const labels = this.datasChauffage.map(chauffage => chauffage.name);
 
-        // Trouver les valeurs min et max de ecv
+        // Find the min and max values of ecv
         const minEcv = Math.min(...ecvData);
         const maxEcv = Math.max(...ecvData);
+        // Get the color of each slice of the pie chart
         const backgroundColors = ecvData.map(ecv => this.getColor(ecv, minEcv, maxEcv));
 
         this.createChart(ecvData, labels, backgroundColors);
@@ -83,7 +97,7 @@ export class ChartPieComponent implements OnInit, OnDestroy {
   }
 
   getChartData() {
-    console.log(this.metresCarres);
+    this.generateChart();
   }
 
   ngOnDestroy(): void {
